@@ -1,10 +1,10 @@
 # MagickStack
 
-Uses ImageMagick to merge/stack multiple images on top of each other to create a single image out of many.  Annotates image with timestamp and renames image with current date.
+Uses ImageMagick to merge/stack multiple images horizontally or vertically to create a single image out of many.  Annotates image with timestamp and renames image with current date for a simpler upload to server.
 
 ## Usage
 
-Put groups of images in separate folders.  When the script runs it will check each folder for images, if it finds more than 1 image in a folder, it combines them and moves the combined image into the root directory.  It will run on each folder individually.
+Put groups of images in separate folders.  When the script runs it will check each folder for images, if it finds more than 1 image in a folder, it combines them and moves the combined image into the root directory. 
 
 ## Examples
 
