@@ -8,7 +8,7 @@ Put groups of images in separate folders.  When the script runs it will check ea
 
 ## Examples
 
-<img src="https://github.com/niveknosredneh/MagickStack/blob/main/Examples/Examples_2023-12-03.jpg" height="300" align="middle">
+<img src="https://github.com/niveknosredneh/MagickStack/blob/main/Examples/Examples_2023-12-03.jpg" height="200" align="middle">
 
 
 ### Debian based:
