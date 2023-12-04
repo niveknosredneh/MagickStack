@@ -1,14 +1,14 @@
 @echo off
+REM MagickStack - Kevin M Henderson 2023
 setlocal enabledelayedexpansion
 
-REM MagickStack - Kevin M Henderson 2023
 set WIDTH=1920
 set HEIGHT=1920
-set STACK_VERTICAL=0
+set STACK_VERTICAL=1
 set /a FONT_SIZE=HEIGHT/45
 set FONT_GRAVITY=SouthEast
 set JPG_QUALITY=75
-set "DATE=%DATE:~-4%-%DATE:~3,2%-%DATE:~0,2%"
+set DATE=%date%
 
 if %STACK_VERTICAL% equ 1 (
     set "ORIENTATION=-append"
@@ -24,29 +24,25 @@ for /d %%f in (*) do (
     if !COUNT! gtr 1 (
         pushd "%%f" && mkdir temp
         REM copies all images into 'temp'
-        copy "*.jpg" "*.jpeg" temp\
+        copy *.jpg temp\ 1>NUL 2>NUL
+        copy *.jpeg temp\ 1>NUL 2>NUL
 
         pushd temp
-        for %%i in (*) do (
-            echo %%f/%%i
-            
+        for %%i in (*.jpg) do (
+            echo %%i
             if %STACK_VERTICAL% equ 1 (
-                convert.exe "%%i" -auto-orient -resize %WIDTH% "%%i"
+                magick convert "%%i" -auto-orient -resize %WIDTH% "%%i"
             ) else (
-                convert.exe "%%i" -auto-orient -resize x%HEIGHT% "%%i"
+                magick convert "%%i" -auto-orient -resize x%HEIGHT% "%%i"
             )
-            
-            convert.exe "%%i" -gravity %FONT_GRAVITY% -pointsize !FONT_SIZE! -fill black -annotate +2+2 "%%[exif:DateTimeOriginal]" "%%i"
-            convert.exe "%%i" -gravity %FONT_GRAVITY% -pointsize !FONT_SIZE! -fill white -annotate +2+!FONT_SIZE! "%%[exif:DateTimeOriginal]" "%%i"
+
+            magick convert "%%i" -gravity %FONT_GRAVITY% -pointsize !FONT_SIZE! -fill black -annotate +2+2 "%%[exif:DateTimeOriginal]" "%%i"
+            magick convert "%%i" -gravity %FONT_GRAVITY% -pointsize !FONT_SIZE! -fill white -annotate +2+!FONT_SIZE! "%%[exif:DateTimeOriginal]" "%%i"
         )
 
-        convert.exe %ORIENTATION% * -auto-orient "%%f_%DATE%.png"
-        convert.exe -strip -interlace Plane -gaussian-blur 0.05 -quality %JPG_QUALITY%%% "%%f_%DATE%.png" "%%f_%DATE%.jpg"
-        move "%%f_%DATE%.jpg" ..\..\
-
-        echo "~~%%f_%DATE%.jpg~~"
-        popd
-        rmdir /s /q temp
-        popd
+        magick convert %ORIENTATION% * -auto-orient "..\%%f_%DATE%.png"
+        magick convert -strip -interlace Plane -gaussian-blur 0.05 -quality %JPG_QUALITY%%% "..\%%f_%DATE%.png" "..\..\%%f_%DATE%.jpg"
+	echo %%f_%DATE%.jpg
+        popd && rmdir /s /q temp
     )
 )
