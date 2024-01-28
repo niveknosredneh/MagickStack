@@ -22,14 +22,14 @@ do  # run only if dir contains >1 image
         for img in *
         do
             echo $f/$img
-            
             if [ $STACK_VERTICAL -eq 1 ]; then
-            	convert "$img" -auto-orient -resize "$WIDTH" "$img"
+            	RESIZE="$WIDTH"
             else
-            	convert "$img" -auto-orient -resize "x$HEIGHT" "$img"
+            	RESIZE="x$HEIGHT"
             fi
             
-            convert "$img" 													\
+            convert "$img" 				\
+            	-auto-orient -resize $RESIZE		\
             	-gravity $FONT_GRAVITY -pointsize $FONT_SIZE -fill black 	\
             	-annotate +2+2  %[exif:DateTimeOriginal] -fill white 		\
             	-annotate +2+$((2+$FONT_SIZE)) %[exif:DateTimeOriginal] 	\
@@ -38,7 +38,7 @@ do  # run only if dir contains >1 image
 
         convert $ORIENTATION ./* -auto-orient -strip -interlace Plane -gaussian-blur 0.05 -quality $JPG_QUALITY% "$f"_"$DATE".jpg
         mv "$f"_"$DATE".jpg ../../
-        echo "~~$f"_"$DATE".jpg~~
-        cd ..; rm -rf temp; cd .. # cleanup and leave dir
+        echo "$f"_"$DATE".jpg
+        cd ..; rm -rf temp # cleanup and leave dir
     fi
 done
