@@ -1,9 +1,9 @@
 #!/bin/bash
 # MagickStack - Kevin M Henderson 2023
 
-WIDTH=600 # max width only applies to vertical stack
-HEIGHT=600 # max height only applies to horizontal stack
-STACK_VERTICAL=0 # 1=vertical 0=horizontal
+WIDTH=1920 # max width only applies to vertical stack
+HEIGHT=1080 # max height only applies to horizontal stack
+STACK_VERTICAL=1 # 1=vertical 0=horizontal
 FONT_SIZE=$(($HEIGHT/40)) # can replace with simple int (ex. 32)
 FONT_GRAVITY=SouthEast #North, NorthWest, Center, East, SouthEast, South, etc.
 JPG_QUALITY=50
@@ -29,12 +29,14 @@ do  # run only if dir contains >1 image
             	convert "$img" -auto-orient -resize "x$HEIGHT" "$img"
             fi
             
-            convert "$img" -gravity $FONT_GRAVITY -pointsize $FONT_SIZE -fill black -annotate +2+2  %[exif:DateTimeOriginal] "$img"
-            convert "$img" -gravity $FONT_GRAVITY -pointsize $FONT_SIZE -fill white -annotate +2+$((2+$FONT_SIZE)) %[exif:DateTimeOriginal] "$img"
+            convert "$img" 													\
+            	-gravity $FONT_GRAVITY -pointsize $FONT_SIZE -fill black 	\
+            	-annotate +2+2  %[exif:DateTimeOriginal] -fill white 		\
+            	-annotate +2+$((2+$FONT_SIZE)) %[exif:DateTimeOriginal] 	\
+            	"$img"
         done
 
-        convert $ORIENTATION ./* -auto-orient "$f"_"$DATE".png
-        convert -strip -interlace Plane -gaussian-blur 0.05 -quality $JPG_QUALITY% "$f"_"$DATE".png "$f"_"$DATE".jpg
+        convert $ORIENTATION ./* -auto-orient -strip -interlace Plane -gaussian-blur 0.05 -quality $JPG_QUALITY% "$f"_"$DATE".jpg
         mv "$f"_"$DATE".jpg ../../
         echo "~~$f"_"$DATE".jpg~~
         cd ..; rm -rf temp; cd .. # cleanup and leave dir
